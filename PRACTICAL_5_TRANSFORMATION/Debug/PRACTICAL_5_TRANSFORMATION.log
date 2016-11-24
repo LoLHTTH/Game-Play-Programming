@@ -1,0 +1,13 @@
+﻿  Game.cpp
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(70): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(71): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(72): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(86): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(87): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(88): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(94): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(95): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(96): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\c00201361\desktop\practical_5_transformation\game.cpp(135): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  PRACTICAL_5_TRANSFORMATION.vcxproj -> C:\Users\c00201361\Desktop\PRACTICAL_5_TRANSFORMATION\Debug\PRACTICAL_5_TRANSFORMATION.exe
+  PRACTICAL_5_TRANSFORMATION.vcxproj -> C:\Users\c00201361\Desktop\PRACTICAL_5_TRANSFORMATION\Debug\PRACTICAL_5_TRANSFORMATION.pdb (Partial PDB)
