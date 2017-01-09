@@ -1,0 +1,35 @@
+﻿  Main.cpp
+  Game.cpp
+c:\users\c00201361\desktop\project 1\game.cpp(503): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(504): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(508): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(509): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(513): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(514): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(518): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(519): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(523): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(524): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(528): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(529): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(539): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(540): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(541): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(545): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(546): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(547): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(551): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(552): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(553): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(557): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(558): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(559): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(563): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(564): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(565): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(569): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(570): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\c00201361\desktop\project 1\game.cpp(571): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+  Project 1.vcxproj -> C:\Users\c00201361\Desktop\Project 1\Debug\Project 1.exe
+  Project 1.vcxproj -> C:\Users\c00201361\Desktop\Project 1\Debug\Project 1.pdb (Partial PDB)
