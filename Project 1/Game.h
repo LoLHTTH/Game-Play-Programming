@@ -27,8 +27,6 @@ private:
 	void update();
 	void render();
 	void unload();
-	void translate();
-	void applyMatrix(Matrix matrix);
 
 	Clock clock;
 	Time elapsed;
