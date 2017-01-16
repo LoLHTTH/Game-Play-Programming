@@ -27,6 +27,7 @@ private:
 	void update();
 	void render();
 	void unload();
+	//void rotatePoints(Vertex vertex[]);
 
 	Clock clock;
 	Time elapsed;

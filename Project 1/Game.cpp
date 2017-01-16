@@ -58,46 +58,46 @@ void Game::initialize()
 	// FRONT FACE
 
 	// Left Bottom
-	vertex[0].coordinate[0] = -0.5f;
-	vertex[0].coordinate[1] = -0.5f;
+	vertex[0].coordinate[0] = -0.1f;
+	vertex[0].coordinate[1] = -0.1f;
 	vertex[0].coordinate[2] = 0.0f;
 		  
 	// Right Bottom
-	vertex[1].coordinate[0] = 0.5f;
-	vertex[1].coordinate[1] = -0.5f;
+	vertex[1].coordinate[0] = 0.1f;
+	vertex[1].coordinate[1] = -0.1f;
 	vertex[1].coordinate[2] = 0.0f;
 
 	// Top Left
-	vertex[2].coordinate[0] = -0.5f;
-	vertex[2].coordinate[1] = 0.5f;
+	vertex[2].coordinate[0] = -0.1f;
+	vertex[2].coordinate[1] = 0.1f;
 	vertex[2].coordinate[2] = 0.0f;
 
 	// Top Right
-	vertex[3].coordinate[0] = 0.5f;
-	vertex[3].coordinate[1] = 0.5f;
+	vertex[3].coordinate[0] = 0.1f;
+	vertex[3].coordinate[1] = 0.1f;
 	vertex[3].coordinate[2] = 0.0f;
 
 	// BACK FACE
 
 	// Left Bottom
-	vertex[4].coordinate[0] = -0.5f;
-	vertex[4].coordinate[1] = -0.5f;
-	vertex[4].coordinate[2] = -1.0f;
+	vertex[4].coordinate[0] = -0.1f;
+	vertex[4].coordinate[1] = -0.1f;
+	vertex[4].coordinate[2] = -0.2f;
 
 	// Right Bottom
-	vertex[5].coordinate[0] = 0.5f;
-	vertex[5].coordinate[1] = -0.5f;
-	vertex[5].coordinate[2] = -1.0f;
+	vertex[5].coordinate[0] = 0.1f;
+	vertex[5].coordinate[1] = -0.1f;
+	vertex[5].coordinate[2] = -0.2f;
 
 	// Top Left
-	vertex[6].coordinate[0] = -0.5f;
-	vertex[6].coordinate[1] = 0.5f;
-	vertex[6].coordinate[2] = -1.0f;
+	vertex[6].coordinate[0] = -0.1f;
+	vertex[6].coordinate[1] = 0.1f;
+	vertex[6].coordinate[2] = -0.2f;
 
 	// Top Right
-	vertex[7].coordinate[0] = 0.5f;
-	vertex[7].coordinate[1] = 0.5f;
-	vertex[7].coordinate[2] = -1.0f;
+	vertex[7].coordinate[0] = 0.1f;
+	vertex[7].coordinate[1] = 0.1f;
+	vertex[7].coordinate[2] = -0.2f;
 		  
 	//CYAN
 	vertex[0].color[0] = 0.0f;
@@ -144,37 +144,32 @@ void Game::initialize()
 	vertex[7].color[1] = 0.419608f;
 	vertex[7].color[2] = 0.184314f;
 
-	//FRONT - bot tri
-	triangles[0] = 0;   triangles[1] = 1;   triangles[2] = 2;
-	//FRONT - top tri
-	triangles[3] = 1;   triangles[4] = 3;   triangles[5] = 2;
+	//FRONT
+	triangles[0] = 3;   triangles[1] = 2;   triangles[2] = 0;
+	triangles[3] = 3;   triangles[4] = 0;   triangles[5] = 1;
 
-	//BACK - bot tri
-	triangles[30] = 4;   triangles[31] = 5;   triangles[32] = 6;
-	//BACK - top tri
-	triangles[33] = 5;   triangles[34] = 7;   triangles[35] = 6;
+	//BACK
+	triangles[30] = 6;   triangles[31] = 7;   triangles[32] = 5;
+	triangles[33] = 6;   triangles[34] = 5;   triangles[35] = 4;
 
-	//LEFT SIDE - Top Tri
-	triangles[6] = 0;   triangles[7] = 2;   triangles[8] = 4;
-	//LEFT SIDE - Bot Tri
-	triangles[9] = 2;   triangles[10] = 6;   triangles[11] = 4;
+	//LEFT SIDE
+	triangles[6] = 2;   triangles[7] = 6;   triangles[8] = 4;
+	triangles[9] = 2;   triangles[10] = 4;   triangles[11] = 0;
 
-	//RIGHT SIDE - Top Tri
-	triangles[12] = 1;   triangles[13] = 3;   triangles[14] = 5;
-	//RIGHT SIDE - Bot Tri
-	triangles[15] = 3;   triangles[16] = 7;   triangles[17] = 5;
+	//RIGHT SIDE
+	triangles[12] = 7;   triangles[13] = 3;   triangles[14] = 1;
+	triangles[15] = 7;   triangles[16] = 1;   triangles[17] = 5;
 
-	//TOP SIDE - Top Tri
-	triangles[18] = 2;   triangles[19] = 3;   triangles[20] = 6;
-	//TOP SIDE - Bot Tri
-	triangles[21] = 3;   triangles[22] = 7;   triangles[23] = 6;
+	//TOP SIDE
+	triangles[18] = 7;   triangles[19] = 6;   triangles[20] = 2;
+	triangles[21] = 7;   triangles[22] = 2;   triangles[23] = 3;
 
-	//BOT SIDE - Top Tri
-	triangles[24] = 1;   triangles[25] = 0;   triangles[26] = 5;
-	//BOT SIDE - Bot Tri
-	triangles[27] = 0;   triangles[28] = 4;   triangles[29] = 5;
+	//BOT SIDE
+	triangles[24] = 1;   triangles[25] = 0;   triangles[26] = 4;
+	triangles[27] = 1;   triangles[28] = 4;   triangles[29] = 5;
 
-
+	glEnable(GL_CULL_FACE);
+	glTranslated(-0.45, 0.5, 0);
 
 	/* Create a new VBO using VBO id */
 	glGenBuffers(1, vbo);
@@ -190,12 +185,14 @@ void Game::initialize()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLubyte) * 36, triangles, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 }
 
 void Game::update()
 {
 	elapsed = clock.getElapsedTime();
-	glRotated(0.1, 1.0, 1.0, 1.0);
+	glRotated(0.1, 0.1, 0.1, 0.1);
+
 	if (elapsed.asSeconds() >= 1.0f)
 	{
 		clock.restart();
@@ -267,6 +264,11 @@ void Game::unload()
 
 	glDeleteBuffers(1, vbo);
 }
+
+//void rotatePoints(Vertex vertex[])
+//{
+//	Matrix matrixRotate;
+//}
 
 
 
