@@ -42,6 +42,8 @@ Vertex vertex[8];
 GLubyte triangles[36];
 
 float angle = 0.5f;
+bool jump = false;
+bool fall = false;
 
 /* Variable to hold the VBO identifier */
 GLuint vbo[1];
@@ -169,7 +171,8 @@ void Game::initialize()
 	triangles[27] = 1;   triangles[28] = 4;   triangles[29] = 5;
 
 	glEnable(GL_CULL_FACE);
-	glTranslated(-0.45, 0.5, 0);
+	glTranslated(-0.45, 0.2, 0);
+	glRotated(90, 0, 1, 0);
 
 	/* Create a new VBO using VBO id */
 	glGenBuffers(1, vbo);
@@ -186,12 +189,12 @@ void Game::initialize()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLubyte) * 36, triangles, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+
 }
 
 void Game::update()
 {
 	elapsed = clock.getElapsedTime();
-	glRotated(0.1, 0.1, 0.1, 0.1);
 
 	if (elapsed.asSeconds() >= 1.0f)
 	{
@@ -220,6 +223,49 @@ void Game::update()
 	//vertex[0].coordinate[0] += -0.0001f;
 	//[0].coordinate[1] += -0.0001f;
 	//vertex[0].coordinate[2] += -0.0001f;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		jump = true;
+	} 
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			vertex[i].coordinate[2] += 0.001f;
+		}
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			vertex[i].coordinate[2] -= 0.001f;
+		}
+	}
+
+	if (jump)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			vertex[i].coordinate[1] += 0.005f;
+			if (vertex[i].coordinate[1] >= 0.5f)
+			{
+				jump = false;
+				fall = true;
+			}
+		}
+	}
+	if (fall)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			vertex[i].coordinate[1] -= 0.005f;
+			if (vertex[i].coordinate[1] <= 0.1f - 0.2f)
+			{
+				fall = false;
+			}
+		}
+	}
 
 	cout << "Update up" << endl;
 }
