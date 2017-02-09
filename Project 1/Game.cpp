@@ -41,7 +41,8 @@ typedef struct
 Vertex vertex[8];
 GLubyte triangles[36];
 
-float angle = 0.5f;
+float angle = 0;
+
 bool jump = false;
 bool fall = false;
 
@@ -201,7 +202,7 @@ void Game::update()
 		clock.restart();
 
 		if (!flip)
-		{
+		{                         
 			flip = true;
 		}
 		else
@@ -223,9 +224,10 @@ void Game::update()
 	//vertex[0].coordinate[0] += -0.0001f;
 	//[0].coordinate[1] += -0.0001f;
 	//vertex[0].coordinate[2] += -0.0001f;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !jump && !fall)
 	{
 		jump = true;
+		angle = 0;
 	} 
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
@@ -243,11 +245,12 @@ void Game::update()
 		}
 	}
 
+
 	if (jump)
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			vertex[i].coordinate[1] += 0.005f;
+			vertex[i].coordinate[1] += 0.003f;
 			if (vertex[i].coordinate[1] >= 0.5f)
 			{
 				jump = false;
@@ -259,10 +262,14 @@ void Game::update()
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			vertex[i].coordinate[1] -= 0.005f;
+			vertex[i].coordinate[1] -= 0.003f;
 			if (vertex[i].coordinate[1] <= 0.1f - 0.2f)
 			{
 				fall = false;
+				if (!fall)
+				{
+					vertex[i].coordinate[1] = 0.1f - 0.2f;
+				}
 			}
 		}
 	}
