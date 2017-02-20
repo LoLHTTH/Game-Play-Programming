@@ -89,6 +89,7 @@ void Game::run()
 				isRunning = false;
 			}
 
+
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 			{
 				// Set Model Rotation
@@ -112,7 +113,7 @@ void Game::run()
 				// Set Model Rotation
 				model = rotate(model, 0.01f, glm::vec3(1, 0, 0)); // Rotate
 			}
-			
+
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 			{
 				if (player.getPos().x > -maxPos.x)
@@ -131,11 +132,13 @@ void Game::run()
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 			{
-				model = translate(model, glm::vec3(0, -0.15, 0)); // Move Down
+				model = translate(model, glm::vec3(0, 0, 0.25)); // Move Down
+			//	model = scale(model, glm::vec3(1.05, 1.05, 1.05));
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 			{
-				model = translate(model, glm::vec3(0, 0.15, 0)); // Move Up
+				model = translate(model, glm::vec3(0, 0, -0.25)); // Move Up
+				//model = scale(model, glm::vec3(0.95, 0.95, 0.95));
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !fall && !jump)
 			{
@@ -143,6 +146,7 @@ void Game::run()
 				jump = true;
 			}
 		}
+		
 		update();
 		render();
 	}
@@ -183,28 +187,8 @@ void Game::initialize()
 	// Indices to be drawn
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * INDICES * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
-	const char* vs_src = 
-		"#version 400\n\r"
-		""
-		//"layout(location = 0) in vec3 sv_position; //Use for individual Buffers"
-		//"layout(location = 1) in vec4 sv_color; //Use for individual Buffers"
-		//"layout(location = 2) in vec2 sv_texel; //Use for individual Buffers"
-		""
-		"in vec3 sv_position;"
-		"in vec4 sv_color;"
-		"in vec2 sv_uv;"
-		""
-		"out vec4 color;"
-		"out vec2 uv;"
-		""
-		"uniform mat4 sv_mvp;"
-		""
-		"void main() {"
-		"	color = sv_color;"
-		"	uv = sv_uv;"
-		//"	gl_Position = vec4(sv_position, 1);"
-		"	gl_Position = sv_mvp * vec4(sv_position, 1);"
-		"}"; //Vertex Shader Src
+	string shader = readShader();
+	const char* vs_src = shader.c_str();
 
 	DEBUG_MSG("Setting Up Vertex Shader");
 
@@ -224,26 +208,8 @@ void Game::initialize()
 		DEBUG_MSG("ERROR: Vertex Shader Compilation Error");
 	}
 
-	const char* fs_src =
-		"#version 400\n\r"
-		""
-		"uniform sampler2D f_texture;"
-		""
-		"in vec4 color;"
-		"in vec2 uv;"
-		""
-		"out vec4 fColor;"
-		""
-		"void main() {"
-		//"	vec4 lightColor = vec4(1.0f, 0.0f, 0.0f, 1.0f); "
-		//"	fColor = vec4(0.50f, 0.50f, 0.50f, 1.0f);"
-		//"	fColor = texture2D(f_texture, uv);"
-		//"	fColor = color * texture2D(f_texture, uv);"
-		//"	fColor = lightColor * texture2D(f_texture, uv);"
-		//"	fColor = color + texture2D(f_texture, uv);"
-		"	fColor = color - texture2D(f_texture, uv);"
-		//"	fColor = color;"
-		"}"; //Fragment Shader Src
+	string fragment = readFragment();
+	const char* fs_src = fragment.c_str();
 
 	DEBUG_MSG("Setting Up Fragment Shader");
 
@@ -358,6 +324,7 @@ void Game::update()
 	{
 		model = translate(model, glm::vec3(0, 0.001 * gravity.y, 0)); // Go Up
 		player.addY();
+
 		if (player.getPos().y >= maxPos.y)
 		{
 			player.setY(maxPos.y);
@@ -481,4 +448,39 @@ void Game::unload()
 	glDeleteBuffers(1, &vib);		// Delete Vertex Index Buffer
 	stbi_image_free(img_data);		// Free image
 }
+string Game::readShader()
+{
+	string line;
+	ifstream myfile("../shaders.txt");
+	string shader;
+	if (myfile.is_open())
+	{
+		while (getline(myfile, line))
+		{
+			shader += line + '\n';
+		}
+		myfile.close();
+	}
 
+	else cout << "Unable to open file";
+
+	return shader;
+}
+string Game::readFragment()
+{
+	string line;
+	ifstream myfile("../fragment.txt");
+	string fragment;
+	if (myfile.is_open())
+	{
+		while (getline(myfile, line))
+		{
+			fragment += line + '\n';
+		}
+		myfile.close();
+	}
+
+	else cout << "Unable to open file";
+
+	return fragment;
+}

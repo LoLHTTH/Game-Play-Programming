@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include <iostream>
+#include <fstream>
 #include <GL/glew.h>
 #include <GL/wglew.h>
 
@@ -26,6 +27,13 @@ using namespace std;
 using namespace sf;
 using namespace glm;
 
+enum GameState
+{
+	play,
+	gameover,
+	win,
+};
+
 class Game
 {
 public:
@@ -40,6 +48,8 @@ private:
 	void update();
 	void render();
 	void unload();
+	string readShader();
+	string readFragment();
 };
 
 #endif

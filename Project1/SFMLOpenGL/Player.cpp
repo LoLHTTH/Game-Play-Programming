@@ -3,11 +3,20 @@
 Player::Player()
 {
 	m_pos = sf::Vector2f(0, 0);
+	m_velocity = sf::Vector2f(0, 2);
 }
 
 sf::Vector2f Player::getPos() const
 {
 	return m_pos;
+}
+sf::Vector2f Player::getVelocity() const
+{
+	return m_velocity;
+}
+void Player::setPos(sf::Vector2f pos)
+{
+	m_pos = pos;
 }
 
 void Player::addX()
