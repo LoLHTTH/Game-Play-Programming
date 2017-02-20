@@ -8,7 +8,6 @@
 #include <GL/glew.h>
 #include <GL/wglew.h>
 
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -19,6 +18,9 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
+#include "Ground.h"
+#include "Player.h"
 
 using namespace std;
 using namespace sf;

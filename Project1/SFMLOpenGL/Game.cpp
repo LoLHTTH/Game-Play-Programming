@@ -1,5 +1,6 @@
 #include <Game.h>
 #include <Cube.h>
+
 // This is a Cube Game 
 template <typename T>
 string toString(T number)
@@ -44,8 +45,12 @@ Font font;
 
 bool jump;
 bool fall;
-sf::Vector2f gravity(0, 9.8f);
-float m_time;
+
+sf::Vector2f gravity(0, 9.8f); // the gravity
+Player player;
+sf::Vector2f maxPos(64, 300); // the max height the player can jump
+
+Ground ground;
 
 Game::Game() : 
 	window(VideoMode(800, 600), 
@@ -110,11 +115,19 @@ void Game::run()
 			
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 			{
-				model = translate(model, glm::vec3(-0.15, 0, 0)); // Move Left
+				if (player.getPos().x > -maxPos.x)
+				{
+					player.subX();
+					model = translate(model, glm::vec3(-0.15, 0, 0)); // Move Left
+				}
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 			{
-				model = translate(model, glm::vec3(0.15, 0, 0)); // Move Right
+				if (player.getPos().x < maxPos.x)
+				{
+					player.addX();
+					model = translate(model, glm::vec3(0.15, 0, 0)); // Move Right
+				}
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 			{
@@ -126,7 +139,7 @@ void Game::run()
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !fall && !jump)
 			{
-				m_time = 0;
+				player.setY(0);
 				jump = true;
 			}
 		}
@@ -344,17 +357,17 @@ void Game::update()
 	if (jump)
 	{
 		model = translate(model, glm::vec3(0, 0.001 * gravity.y, 0)); // Go Up
-		m_time += 0.2f;
-		if (m_time >= 100)
+		player.addY();
+		if (player.getPos().y >= maxPos.y)
 		{
-			m_time = 100;
+			player.setY(maxPos.y);
 			jump = false;
 			fall = true;
 		}
 	}
-	if (m_time > 0 && fall == true)
+	if (player.getPos().y > 0 && fall == true)
 	{
-		m_time -= 0.2f;
+		player.subY();
 		model = translate(model, glm::vec3(0, -0.001 * gravity.y, 0)); // Go Down
 	}
 	else
@@ -382,10 +395,10 @@ void Game::render()
 	int x = Mouse::getPosition(window).x;
 	int y = Mouse::getPosition(window).y;
 
-	string hud = "Heads Up Display ["
-		+ string(toString(x))
+	string hud = "The Position ["
+		+ string(toString(player.getPos().x))
 		+ "]["
-		+ string(toString(y))
+		+ string(toString(player.getPos().y))
 		+ "]";
 
 	Text text(hud, font);
@@ -394,6 +407,8 @@ void Game::render()
 	text.setPosition(50.f, 50.f);
 
 	window.draw(text);
+
+	ground.render(window); // draws the ground
 
 	// Restore OpenGL render states
 	// https://www.sfml-dev.org/documentation/2.0/classsf_1_1RenderTarget.php#a8d1998464ccc54e789aaf990242b47f7
