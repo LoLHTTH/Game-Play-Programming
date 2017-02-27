@@ -22,6 +22,7 @@
 
 #include "Ground.h"
 #include "Player.h"
+#include "Goal.h"
 
 using namespace std;
 using namespace sf;
@@ -50,6 +51,7 @@ private:
 	void unload();
 	string readShader();
 	string readFragment();
+	void createCube(glm::mat4 &model);
 };
 
 #endif

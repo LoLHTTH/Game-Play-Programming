@@ -39,18 +39,21 @@ int comp_count;					// Component of texture
 
 unsigned char* img_data;		// image data
 
-mat4 mvp, projection, view, model;			// Model View Projection
+mat4 mvp, projection, view, pModel;			// Model View Projection
+std::vector <mat4> model;
+std::vector <sf::Vector2f> pos;
 
 Font font;
 
 bool jump;
 bool fall;
 
-sf::Vector2f gravity(0, 9.8f); // the gravity
+sf::Vector2f gravity(0, 10.f); // the gravity
 Player player;
-sf::Vector2f maxPos(64, 300); // the max height the player can jump
+sf::Vector3f maxPos(21, 300, 32); // the max height the player can jump
 
 Ground ground;
+Goal goal;
 
 Game::Game() : 
 	window(VideoMode(800, 600), 
@@ -81,7 +84,6 @@ void Game::run()
 #if (DEBUG >= 2)
 		DEBUG_MSG("Game running...");
 #endif
-
 		while (window.pollEvent(event))
 		{
 			if (event.type == Event::Closed)
@@ -93,25 +95,25 @@ void Game::run()
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 			{
 				// Set Model Rotation
-				model = rotate(model, 0.01f, glm::vec3(0, 1, 0)); // Rotate
+				pModel = rotate(pModel, 0.01f, glm::vec3(0, 1, 0)); // Rotate
 			}
 
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			{
 				// Set Model Rotation
-				model = rotate(model, -0.01f, glm::vec3(0, 1, 0)); // Rotate
+				pModel = rotate(pModel, -0.01f, glm::vec3(0, 1, 0)); // Rotate
 			}
 
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 			{
 				// Set Model Rotation
-				model = rotate(model, -0.01f, glm::vec3(1, 0, 0)); // Rotate
+				pModel = rotate(pModel, -0.01f, glm::vec3(1, 0, 0)); // Rotate
 			}
 
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 			{
 				// Set Model Rotation
-				model = rotate(model, 0.01f, glm::vec3(1, 0, 0)); // Rotate
+				pModel = rotate(pModel, 0.01f, glm::vec3(1, 0, 0)); // Rotate
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -119,7 +121,7 @@ void Game::run()
 				if (player.getPos().x > -maxPos.x)
 				{
 					player.subX();
-					model = translate(model, glm::vec3(-0.15, 0, 0)); // Move Left
+					pModel = translate(pModel, glm::vec3(-0.15, 0, 0)); // Move Left
 				}
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
@@ -127,18 +129,24 @@ void Game::run()
 				if (player.getPos().x < maxPos.x)
 				{
 					player.addX();
-					model = translate(model, glm::vec3(0.15, 0, 0)); // Move Right
+					pModel = translate(pModel, glm::vec3(0.15, 0, 0)); // Move Right
 				}
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 			{
-				model = translate(model, glm::vec3(0, 0, 0.25)); // Move Down
-			//	model = scale(model, glm::vec3(1.05, 1.05, 1.05));
+				if (player.getPos().z < maxPos.z)
+				{
+					player.addZ();
+					pModel = translate(pModel, glm::vec3(0, 0, 0.25)); // Move Down
+				}
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 			{
-				model = translate(model, glm::vec3(0, 0, -0.25)); // Move Up
-				//model = scale(model, glm::vec3(0.95, 0.95, 0.95));
+				if (player.getPos().z > 0)
+				{
+					player.subZ();
+					pModel = translate(pModel, glm::vec3(0, 0, -0.25)); // Move Up
+				}
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !fall && !jump)
 			{
@@ -146,6 +154,7 @@ void Game::run()
 				jump = true;
 			}
 		}
+
 		
 		update();
 		render();
@@ -160,6 +169,13 @@ void Game::run()
 
 void Game::initialize()
 {
+	for (int i = 0; i < 4; i++)
+	{
+		pos.push_back(sf::Vector2f(0,0));
+		model.push_back(mat4(1.0f));
+		model.at(i) = translate(model.at(i), glm::vec3(6, 0, -3 + i * 2));
+	}
+
 	isRunning = true;
 	GLint isCompiled = 0;
 	GLint isLinked = 0;
@@ -298,7 +314,7 @@ void Game::initialize()
 		);
 
 	// Model matrix
-	model = mat4(
+	pModel = mat4(
 		1.0f					// Identity Matrix
 		);
 
@@ -311,7 +327,7 @@ void Game::initialize()
 	font.loadFromFile(".//Assets//Fonts//BBrick.ttf");
 
 	// Move the model back - Making it smaller
-	model = translate(model, glm::vec3(0, 0, -5));
+	pModel = translate(pModel, glm::vec3(0, 0, -5));
 }
 
 void Game::update()
@@ -322,7 +338,7 @@ void Game::update()
 
 	if (jump)
 	{
-		model = translate(model, glm::vec3(0, 0.001 * gravity.y, 0)); // Go Up
+		pModel = translate(pModel, glm::vec3(0, 0.002 * gravity.y, 0)); // Go Up
 		player.addY();
 
 		if (player.getPos().y >= maxPos.y)
@@ -335,15 +351,42 @@ void Game::update()
 	if (player.getPos().y > 0 && fall == true)
 	{
 		player.subY();
-		model = translate(model, glm::vec3(0, -0.001 * gravity.y, 0)); // Go Down
+		pModel = translate(pModel, glm::vec3(0, -0.002 * gravity.y, 0)); // Go Down
 	}
 	else
 	{
 		fall = false;
 	}
 
+	if (goal.getX() == player.getPos().x)
+	{
+		std::cout << "GOALL" << std::endl;
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		if (pos.at(i).x <= 900)
+		{
+			pos.at(i).x++;
+			model.at(i) = translate(model.at(i), glm::vec3(-0.02, 0, 0));
+		}
+		else if (pos.at(i).x >= 900)
+		{
+			if (pos.at(i).x < 1800)
+			{
+				pos.at(i).x++;
+				model.at(i) = translate(model.at(i), glm::vec3(0.02, 0, 0));
+			}
+			if (pos.at(i).x >= 1800)
+			{
+				pos.at(i).x = 0;
+			}
+		}
+		std::cout << pos.at(i).x << std::endl;
+	}
+
+
 	// Update Model View Projection
-	mvp = projection * view * model;
+	//mvp = projection * view * pModel;
 }
 
 void Game::render()
@@ -366,6 +409,8 @@ void Game::render()
 		+ string(toString(player.getPos().x))
 		+ "]["
 		+ string(toString(player.getPos().y))
+		+ "]["
+		+ string(toString(player.getPos().z))
 		+ "]";
 
 	Text text(hud, font);
@@ -397,31 +442,37 @@ void Game::render()
 	textureID = glGetUniformLocation(progID, "f_texture");
 	mvpID = glGetUniformLocation(progID, "sv_mvp");
 
-	// VBO Data....vertices, colors and UV's appended
-	glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), vertices);
-	glBufferSubData(GL_ARRAY_BUFFER, 3 * VERTICES * sizeof(GLfloat), 4 * COLORS * sizeof(GLfloat), colors);
-	glBufferSubData(GL_ARRAY_BUFFER, ((3 * VERTICES) + (4 * COLORS)) * sizeof(GLfloat), 2 * UVS * sizeof(GLfloat), uvs);
+	createCube(pModel);
 
-	// Send transformation to shader mvp uniform
-	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
+	for (int i = 0; i < 4; i++)
+	{
+		createCube(model.at(i));
+	}
+	//// VBO Data....vertices, colors and UV's appended
+	//glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), vertices);
+	//glBufferSubData(GL_ARRAY_BUFFER, 3 * VERTICES * sizeof(GLfloat), 4 * COLORS * sizeof(GLfloat), colors);
+	//glBufferSubData(GL_ARRAY_BUFFER, ((3 * VERTICES) + (4 * COLORS)) * sizeof(GLfloat), 2 * UVS * sizeof(GLfloat), uvs);
 
-	// Set Active Texture .... 32
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(textureID, 0);
+	//// Send transformation to shader mvp uniform
+	//glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
 
-	// Set pointers for each parameter (with appropriate starting positions)
-	// https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, (VOID*)(3 * VERTICES * sizeof(GLfloat)));
-	glVertexAttribPointer(uvID, 2, GL_FLOAT, GL_FALSE, 0, (VOID*)(((3 * VERTICES) + (4 * COLORS)) * sizeof(GLfloat)));
-	
-	// Enable Arrays
-	glEnableVertexAttribArray(positionID);
-	glEnableVertexAttribArray(colorID);
-	glEnableVertexAttribArray(uvID);
+	//// Set Active Texture .... 32
+	//glActiveTexture(GL_TEXTURE0);
+	//glUniform1i(textureID, 0);
 
-	// Draw Element Arrays
-	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+	//// Set pointers for each parameter (with appropriate starting positions)
+	//// https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xml
+	//glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	//glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, (VOID*)(3 * VERTICES * sizeof(GLfloat)));
+	//glVertexAttribPointer(uvID, 2, GL_FLOAT, GL_FALSE, 0, (VOID*)(((3 * VERTICES) + (4 * COLORS)) * sizeof(GLfloat)));
+	//
+	//// Enable Arrays
+	//glEnableVertexAttribArray(positionID);
+	//glEnableVertexAttribArray(colorID);
+	//glEnableVertexAttribArray(uvID);
+
+	//// Draw Element Arrays
+	//glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
 	window.display();
 
 	// Disable Arrays
@@ -483,4 +534,35 @@ string Game::readFragment()
 	else cout << "Unable to open file";
 
 	return fragment;
+}
+
+void Game::createCube(glm::mat4 & model)
+{
+	mvp = projection * view * model;
+
+	// VBO Data....vertices, colors and UV's appended
+	glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, 3 * VERTICES * sizeof(GLfloat), 4 * COLORS * sizeof(GLfloat), colors);
+	glBufferSubData(GL_ARRAY_BUFFER, ((3 * VERTICES) + (4 * COLORS)) * sizeof(GLfloat), 2 * UVS * sizeof(GLfloat), uvs);
+
+	// Send transformation to shader mvp uniform
+	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
+
+	// Set Active Texture .... 32
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(textureID, 0);
+
+	// Set pointers for each parameter (with appropriate starting positions)
+	// https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xml
+	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, (VOID*)(3 * VERTICES * sizeof(GLfloat)));
+	glVertexAttribPointer(uvID, 2, GL_FLOAT, GL_FALSE, 0, (VOID*)(((3 * VERTICES) + (4 * COLORS)) * sizeof(GLfloat)));
+
+	// Enable Arrays
+	glEnableVertexAttribArray(positionID);
+	glEnableVertexAttribArray(colorID);
+	glEnableVertexAttribArray(uvID);
+
+	// Draw Element Arrays
+	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
 }

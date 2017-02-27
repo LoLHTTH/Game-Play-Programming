@@ -6,9 +6,10 @@ class Player
 {
 public:
 	Player();
-	sf::Vector2f getPos() const;
+	sf::Vector3f getPos() const;
 	sf::Vector2f getVelocity() const;
-	void setPos(sf::Vector2f pos);
+	void setVelocityY(float velocityY);
+	void setPos(sf::Vector3f pos);
 	void addX();
 	void subX();
 	void setX(float x);
@@ -16,7 +17,11 @@ public:
 	void addY();
 	void subY();
 	void setY(float y);
+
+	void addZ();
+	void subZ();
+
 private:
-	sf::Vector2f m_pos;
+	sf::Vector3f m_pos;
 	sf::Vector2f m_velocity;
 };
