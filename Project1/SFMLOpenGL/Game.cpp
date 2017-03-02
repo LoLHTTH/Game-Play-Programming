@@ -41,7 +41,6 @@ unsigned char* img_data;		// image data
 
 mat4 mvp, projection, view, pModel;			// Model View Projection
 std::vector <mat4> model;
-std::vector <sf::Vector2f> pos;
 
 Font font;
 
@@ -50,10 +49,15 @@ bool fall;
 
 sf::Vector2f gravity(0, 10.f); // the gravity
 Player player;
-sf::Vector3f maxPos(21, 300, 32); // the max height the player can jump
+sf::Vector3f maxPos(50, 300, 32); // the max height the player can jump
 
 Ground ground;
-Goal goal;
+
+std::vector<NPC> npc;
+
+float collisionX;
+float collisionZ;
+
 
 Game::Game() : 
 	window(VideoMode(800, 600), 
@@ -74,12 +78,16 @@ Game::~Game(){}
 
 void Game::run()
 {
-
+	npcTimer = 0.2f;
+	goalTime = 30;
+	respawn = false;
 	initialize();
 
 	Event event;
 
 	while (isRunning){
+		m_time = m_clock.getElapsedTime();
+		m_goalTimer = m_gameClock.getElapsedTime();
 
 #if (DEBUG >= 2)
 		DEBUG_MSG("Game running...");
@@ -121,7 +129,7 @@ void Game::run()
 				if (player.getPos().x > -maxPos.x)
 				{
 					player.subX();
-					pModel = translate(pModel, glm::vec3(-0.15, 0, 0)); // Move Left
+					pModel = translate(pModel, glm::vec3(-0.25, 0, 0)); // Move Left
 				}
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
@@ -129,7 +137,7 @@ void Game::run()
 				if (player.getPos().x < maxPos.x)
 				{
 					player.addX();
-					pModel = translate(pModel, glm::vec3(0.15, 0, 0)); // Move Right
+					pModel = translate(pModel, glm::vec3(0.25, 0, 0)); // Move Right
 				}
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
@@ -155,6 +163,10 @@ void Game::run()
 			}
 		}
 
+		if (collisionCheck() == true)
+		{
+			player.setDead();
+		}
 		
 		update();
 		render();
@@ -171,8 +183,8 @@ void Game::initialize()
 {
 	for (int i = 0; i < 4; i++)
 	{
-		pos.push_back(sf::Vector2f(0,0));
 		model.push_back(mat4(1.0f));
+		npc.push_back(NPC(sf::Vector3f(24,0, 8 + i * 8)));
 		model.at(i) = translate(model.at(i), glm::vec3(6, 0, -3 + i * 2));
 	}
 
@@ -358,30 +370,41 @@ void Game::update()
 		fall = false;
 	}
 
-	if (goal.getX() == player.getPos().x)
+	if (move)
 	{
-		std::cout << "GOALL" << std::endl;
+		for (int i = 0; i < 4; i++)
+		{
+			if (npc.at(i).getPos().x > -50 && !respawn)
+			{
+				npc.at(i).subX();
+				model.at(i) = translate(model.at(i), glm::vec3(-0.25, 0, 0));
+			}
+			else
+			{
+				respawn = true;
+			}
+			if (i == 3)
+			{
+				move = false;
+			}
+		}
 	}
-	for (int i = 0; i < 4; i++)
+	if (respawn)
 	{
-		if (pos.at(i).x <= 900)
-		{
-			pos.at(i).x++;
-			model.at(i) = translate(model.at(i), glm::vec3(-0.02, 0, 0));
-		}
-		else if (pos.at(i).x >= 900)
-		{
-			if (pos.at(i).x < 1800)
-			{
-				pos.at(i).x++;
-				model.at(i) = translate(model.at(i), glm::vec3(0.02, 0, 0));
-			}
-			if (pos.at(i).x >= 1800)
-			{
-				pos.at(i).x = 0;
-			}
-		}
-		std::cout << pos.at(i).x << std::endl;
+		Respawn();
+	}
+	if (m_time.asSeconds() > npcTimer)
+	{
+		m_clock.restart();
+		move = true;
+	}
+	if (npcTimer > 0.1)
+	{
+		npcTimer -= 0.0005;
+	}
+	if (m_goalTimer.asSeconds() > goalTime)
+	{
+		win = true;
 	}
 
 
@@ -402,21 +425,34 @@ void Game::render()
 	// https://www.sfml-dev.org/documentation/2.0/classsf_1_1RenderTarget.php#a8d1998464ccc54e789aaf990242b47f7
 	window.pushGLStates();
 
-	int x = Mouse::getPosition(window).x;
-	int y = Mouse::getPosition(window).y;
+	//int x = Mouse::getPosition(window).x;
+	//int y = Mouse::getPosition(window).y;
+	string hud;
 
-	string hud = "The Position ["
-		+ string(toString(player.getPos().x))
-		+ "]["
-		+ string(toString(player.getPos().y))
-		+ "]["
-		+ string(toString(player.getPos().z))
-		+ "]";
+	if (player.checkAlive() && !win)
+	{
+		hud = "The Position ["
+			+ string(toString(player.getPos().x))
+			+ "]["
+			+ string(toString(player.getPos().y))
+			+ "]["
+			+ string(toString(player.getPos().z))
+			+ "]"
+			+ "\nSurvive for 30 seconds!"
+			+ "\nTime passed : " + toString(m_goalTimer.asSeconds());
+	}
+	else if (!player.checkAlive())
+	{
+		hud = "Player is dead!";
+	}
+	else
+	{
+		hud = "You won the game!";
+	}
 
 	Text text(hud, font);
 
 	text.setColor(sf::Color(255, 255, 255, 170));
-	text.setPosition(50.f, 50.f);
 
 	window.draw(text);
 
@@ -442,11 +478,17 @@ void Game::render()
 	textureID = glGetUniformLocation(progID, "f_texture");
 	mvpID = glGetUniformLocation(progID, "sv_mvp");
 
-	createCube(pModel);
-
-	for (int i = 0; i < 4; i++)
+	if (player.checkAlive())
 	{
-		createCube(model.at(i));
+		createCube(pModel);
+	}
+
+	if (!win)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			createCube(model.at(i));
+		}
 	}
 	//// VBO Data....vertices, colors and UV's appended
 	//glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), vertices);
@@ -565,4 +607,46 @@ void Game::createCube(glm::mat4 & model)
 
 	// Draw Element Arrays
 	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+}
+
+bool Game::collisionCheck()
+{
+	//float dist = ((player.getPos().x - npc.at(0).getPos().x) * (player.getPos().x - npc.at(0).getPos().x)) +
+	//	((player.getPos().z - npc.at(0).getPos().z) * (player.getPos().z - npc.at(0).getPos().z));
+	//dist = std::abs(dist);
+	for (int i = 0; i < 4; i++)
+	{
+		collisionX = player.getPos().x - npc.at(i).getPos().x;
+		collisionZ = player.getPos().z - npc.at(i).getPos().z;
+
+		if ((collisionX < 8 && collisionX > -8) && (collisionZ < 8 && collisionZ > -8)
+			&& (player.getPos().y < 8))
+		{
+			collision = true;
+			std::cout << "Collision true! At Index : " << i << std::endl;
+			return collision;
+		}
+	}
+	//if (dist < 2)
+	//{
+	//	collision = true;
+	//	std::cout << "Collision true!" << std::endl;
+	//	return collision;
+	//}
+	//else
+	//{
+	//	collision = false;
+	//	return collision;
+	//}
+}
+void Game::Respawn()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		npc.at(i).setX(24);
+		model.at(i) = translate(model.at(i),
+			glm::vec3(0.25 * 74,
+				0, 0));
+	}
+	respawn = false;
 }

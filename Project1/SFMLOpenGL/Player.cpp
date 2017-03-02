@@ -3,16 +3,12 @@
 Player::Player()
 {
 	m_pos = sf::Vector3f(0, 0, 0);
-	m_velocity = sf::Vector2f(50, 50);
+	m_alive = true;
 }
 
 sf::Vector3f Player::getPos() const
 {
 	return m_pos;
-}
-sf::Vector2f Player::getVelocity() const
-{
-	return m_velocity;
 }
 void Player::setPos(sf::Vector3f pos)
 {
@@ -52,7 +48,11 @@ void Player::subZ()
 {
 	m_pos.z--;
 }
-void Player::setVelocityY(float velocity)
+bool Player::checkAlive()
 {
-	m_velocity.y = velocity;
+	return m_alive;
+}
+void Player::setDead()
+{
+	m_alive = false;
 }

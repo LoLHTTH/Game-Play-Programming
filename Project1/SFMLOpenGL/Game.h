@@ -22,7 +22,7 @@
 
 #include "Ground.h"
 #include "Player.h"
-#include "Goal.h"
+#include "NPC.h"
 
 using namespace std;
 using namespace sf;
@@ -52,6 +52,20 @@ private:
 	string readShader();
 	string readFragment();
 	void createCube(glm::mat4 &model);
+	void Respawn();
+	float respawn;
+
+	bool collisionCheck();
+	bool collision;
+	sf::Clock m_clock;
+	sf::Clock m_gameClock;
+	sf::Time m_time;
+	sf::Time m_goalTimer;
+	float npcTimer; // for moving
+	float goalTime;
+	
+	bool win = false;
+	bool move = true;
 };
 
 #endif

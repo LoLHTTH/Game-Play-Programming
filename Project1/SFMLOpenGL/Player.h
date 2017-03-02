@@ -2,26 +2,28 @@
 
 #include <SFML/Graphics.hpp>
 
+// The player class contains position and status of the player model
 class Player
 {
 public:
 	Player();
-	sf::Vector3f getPos() const;
-	sf::Vector2f getVelocity() const;
-	void setVelocityY(float velocityY);
-	void setPos(sf::Vector3f pos);
-	void addX();
-	void subX();
-	void setX(float x);
+	sf::Vector3f getPos() const; // to get current pos
+	bool checkAlive(); // to check alive
+	void setDead(); // make it dead
 
-	void addY();
-	void subY();
-	void setY(float y);
+	void setPos(sf::Vector3f pos); // set position of player
+	void addX(); // add 1 to x
+	void subX(); // sub 1 to x
+	void setX(float x); // set position of x
 
-	void addZ();
-	void subZ();
+	void addY();// add 1 to y
+	void subY();// sub 1 to y
+	void setY(float y); // set position of y
+
+	void addZ();// add 1 to z
+	void subZ();// sub 1 to z
 
 private:
 	sf::Vector3f m_pos;
-	sf::Vector2f m_velocity;
+	bool m_alive;
 };

@@ -5,7 +5,15 @@
 class NPC
 {
 public:
-	NPC(sf::Vector2f pos);
+	NPC(sf::Vector3f pos);
+	sf::Vector3f getPos() const;
+	void addX();
+	void addY();
+	void addZ();
+	void subX();
+	void subY();
+	void subZ();
+	void setX(float x);
 private:
-	sf::Vector2f m_pos;
+	sf::Vector3f m_pos;
 };
