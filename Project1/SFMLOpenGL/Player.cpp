@@ -48,6 +48,10 @@ void Player::subZ()
 {
 	m_pos.z--;
 }
+void Player::setZ(float z)
+{
+	m_pos.z = z;
+}
 bool Player::checkAlive()
 {
 	return m_alive;

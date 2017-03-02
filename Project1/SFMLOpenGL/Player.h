@@ -22,6 +22,7 @@ public:
 
 	void addZ();// add 1 to z
 	void subZ();// sub 1 to z
+	void setZ(float z); // set position of z
 
 private:
 	sf::Vector3f m_pos;

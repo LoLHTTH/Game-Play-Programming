@@ -49,7 +49,7 @@ bool fall;
 
 sf::Vector2f gravity(0, 10.f); // the gravity
 Player player;
-sf::Vector3f maxPos(50, 300, 32); // the max height the player can jump
+sf::Vector3f maxPos(50, 500, 32); // the max height the player can jump
 
 Ground ground;
 
@@ -100,29 +100,29 @@ void Game::run()
 			}
 
 
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-			{
-				// Set Model Rotation
-				pModel = rotate(pModel, 0.01f, glm::vec3(0, 1, 0)); // Rotate
-			}
+			//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			//{
+			//	// Set Model Rotation
+			//	pModel = rotate(pModel, 0.01f, glm::vec3(0, 1, 0)); // Rotate
+			//}
 
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			{
-				// Set Model Rotation
-				pModel = rotate(pModel, -0.01f, glm::vec3(0, 1, 0)); // Rotate
-			}
+			//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			//{
+			//	// Set Model Rotation
+			//	pModel = rotate(pModel, -0.01f, glm::vec3(0, 1, 0)); // Rotate
+			//}
 
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-			{
-				// Set Model Rotation
-				pModel = rotate(pModel, -0.01f, glm::vec3(1, 0, 0)); // Rotate
-			}
+			//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+			//{
+			//	// Set Model Rotation
+			//	pModel = rotate(pModel, -0.01f, glm::vec3(1, 0, 0)); // Rotate
+			//}
 
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-			{
-				// Set Model Rotation
-				pModel = rotate(pModel, 0.01f, glm::vec3(1, 0, 0)); // Rotate
-			}
+			//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			//{
+			//	// Set Model Rotation
+			//	pModel = rotate(pModel, 0.01f, glm::vec3(1, 0, 0)); // Rotate
+			//}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 			{
@@ -150,7 +150,7 @@ void Game::run()
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 			{
-				if (player.getPos().z > 0)
+				if (player.getPos().z > 8)
 				{
 					player.subZ();
 					pModel = translate(pModel, glm::vec3(0, 0, -0.25)); // Move Up
@@ -163,7 +163,7 @@ void Game::run()
 			}
 		}
 
-		if (collisionCheck() == true)
+		if (collisionCheck() == true) 
 		{
 			player.setDead();
 		}
@@ -181,6 +181,7 @@ void Game::run()
 
 void Game::initialize()
 {
+	// make all the models for npc
 	for (int i = 0; i < 4; i++)
 	{
 		model.push_back(mat4(1.0f));
@@ -339,7 +340,8 @@ void Game::initialize()
 	font.loadFromFile(".//Assets//Fonts//BBrick.ttf");
 
 	// Move the model back - Making it smaller
-	pModel = translate(pModel, glm::vec3(0, 0, -5));
+	pModel = translate(pModel, glm::vec3(0, 0, 0));
+	player.setZ(20); // set starting z to 20
 }
 
 void Game::update()
