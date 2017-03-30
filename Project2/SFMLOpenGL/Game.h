@@ -53,6 +53,13 @@ private:
 	string readFragment();
 	void createCube(glm::mat4 &model);
 
+	// views
+	sf::View m_fullView;
+	sf::View m_leftView;
+	sf::View m_rightView;
+	// windows
+	sf::RenderWindow m_windowLeft;
+	sf::RenderWindow m_windowRight;
 };
 
 #endif

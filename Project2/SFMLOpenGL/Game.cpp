@@ -47,20 +47,19 @@ Font font;
 sf::Vector2f gravity(0, 10.f); // the gravity
 Player player;
 sf::Vector3f maxPos(50, 500, 32); // the max height the player can jump
-
 Ground ground;
 
 std::vector<NPC> npc;
 
 Game::Game() : 
 	window(VideoMode(800, 600), 
-	"Introduction to OpenGL Texturing")
+	"Virtual Reality")
 {
 }
 
 Game::Game(sf::ContextSettings settings) : 
 	window(VideoMode(800, 600), 
-	"Introduction to OpenGL Texturing", 
+	"Virtual Reality", 
 	sf::Style::Default, 
 	settings)
 {
@@ -137,6 +136,19 @@ void Game::run()
 
 void Game::initialize()
 {
+
+	// the views
+	m_fullView.setSize(sf::Vector2f(window.getSize()));
+	m_fullView.setCenter(sf::Vector2f(window.getSize()) / 2.f);
+
+	m_leftView.setSize(sf::Vector2f(window.getSize().x / 2.f, window.getSize().y));
+	m_leftView.setCenter(sf::Vector2f(window.getSize().x / 2.f, window.getSize().y) / 2.f);
+	m_leftView.setViewport(sf::FloatRect(0, 0, 0.5f, 1));
+
+	m_rightView.setSize(sf::Vector2f(window.getSize().x / 2.f, window.getSize().y));
+	m_rightView.setCenter(sf::Vector2f(window.getSize().x + window.getSize().x / 2.f, window.getSize().y) / 2.f);
+	m_rightView.setViewport(sf::FloatRect(0.5, 0, 0.5f, 1));
+
 	// make all the models for npc
 	for (int i = 0; i < 4; i++)
 	{
@@ -321,6 +333,8 @@ void Game::render()
 	// https://www.sfml-dev.org/documentation/2.0/classsf_1_1RenderTarget.php#a8d1998464ccc54e789aaf990242b47f7
 	window.pushGLStates();
 
+	window.setView(m_leftView);
+
 	//int x = Mouse::getPosition(window).x;
 	//int y = Mouse::getPosition(window).y;
 	string hud;
@@ -350,9 +364,8 @@ void Game::render()
 	text.setColor(sf::Color(255, 255, 255, 170));
 	text.setCharacterSize(70);
 
+	ground.render(window);
 	window.draw(text);
-
-	ground.render(window); // draws the ground
 
 	// Restore OpenGL render states
 	// https://www.sfml-dev.org/documentation/2.0/classsf_1_1RenderTarget.php#a8d1998464ccc54e789aaf990242b47f7
@@ -381,32 +394,7 @@ void Game::render()
 	{
 		createCube(model.at(i));
 	}
-
-	//// VBO Data....vertices, colors and UV's appended
-	//glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), vertices);
-	//glBufferSubData(GL_ARRAY_BUFFER, 3 * VERTICES * sizeof(GLfloat), 4 * COLORS * sizeof(GLfloat), colors);
-	//glBufferSubData(GL_ARRAY_BUFFER, ((3 * VERTICES) + (4 * COLORS)) * sizeof(GLfloat), 2 * UVS * sizeof(GLfloat), uvs);
-
-	//// Send transformation to shader mvp uniform
-	//glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
-
-	//// Set Active Texture .... 32
-	//glActiveTexture(GL_TEXTURE0);
-	//glUniform1i(textureID, 0);
-
-	//// Set pointers for each parameter (with appropriate starting positions)
-	//// https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-	//glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	//glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, (VOID*)(3 * VERTICES * sizeof(GLfloat)));
-	//glVertexAttribPointer(uvID, 2, GL_FLOAT, GL_FALSE, 0, (VOID*)(((3 * VERTICES) + (4 * COLORS)) * sizeof(GLfloat)));
-	//
-	//// Enable Arrays
-	//glEnableVertexAttribArray(positionID);
-	//glEnableVertexAttribArray(colorID);
-	//glEnableVertexAttribArray(uvID);
-
-	//// Draw Element Arrays
-	//glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+	
 	window.display();
 
 	// Disable Arrays
